@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sujianhui.materialsManagement.dao.MaterialsMapper">
+    <resultMap id="materialMap" type="com.sujianhui.materialsManagement.model.MaterialsDTO">
+        <id property="id" column="id"/>
+        <!--property中的内容是对实体的映射，对应于materialsDto中的属性-->
+        <result property="name" column="name"/>
+        <result property="singlePrice" column="price"/>
+        <result property="stockNum" column="stock_num"/>
+        <result property="storeNum" column="amount"/>
+        <result property="borrowNum" column="b_amount"/>
+    </resultMap>
+
+    <!--&lt;!&ndash;得到materials的id&ndash;&gt;-->
+    <!--<select id="selectIdByMaterialsName" resultType="java.lang.Long" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--SELECT id FROM materials WHERE name = #{name}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;得到materials的单价&ndash;&gt;-->
+    <!--<select id="selectPriceByMaterialsName" resultType="java.lang.Long" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--SELECT price FROM materials WHERE name = #{name}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;得到materials&ndash;&gt;-->
+    <!--<select id="findMaterialsByName" resultType="com.sujianhui.materialsManagement.dto.MaterialsDTO" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--SELECT * FROM materials WHERE name = #{name}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;在materials表中添加materials&ndash;&gt;-->
+    <!--<insert id="createMaterials" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--INSERT INTO materials values(#{id},#{name},#{price},#{isDelete})-->
+    <!--</insert>-->
+    <!--&lt;!&ndash;在materials_stock表中添加materials表示目前存储的数量&ndash;&gt;-->
+    <!--<insert id="createMaterialsStock" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--INSERT INTO materials_stock values(#{id},#{materialId},#{stockNum})-->
+    <!--</insert>-->
+    <!--&lt;!&ndash;在store_item表中添加materials表示存进来的数量（包括归还和买进这类物品）&ndash;&gt;-->
+    <!--<insert id="createMaterialsStore" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--INSERT INTO store_item values(#{id},#{materialId},#{storeId},#{amount})-->
+    <!--</insert>-->
+    <!--&lt;!&ndash;在borrow_item表中添加materials表示借出去的数量（包括借出和消耗掉的这类物品）&ndash;&gt;-->
+    <!--<insert id="createMaterialsBorrow" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--INSERT INTO borrow_item values(#{id},#{materialId},#{borrowId},#{amount})-->
+    <!--</insert>-->
+
+    <!--从多表查询materials的所有信息-->
+    <select id="getAllMaterials" resultMap="materialMap">
+    select materials.id, materials.name,materials.price,ms.stock_num,s.amount,b.b_amount
+    from materials
+    JOIN materials_stock AS ms ON materials.id = ms.id
+    JOIN store_item AS s ON materials.id = s.material_id
+    JOIN borrow_item AS b ON materials.id = b.material_id
+    </select>
+    <!---->
+    <!--<select id="getAllMaterials" resultType="com.sujianhui.materialsManagement.model.MaterialsDTO">-->
+    <!--select * from materialsDTO-->
+    <!--</select>-->
+
+    <!--多表的更新-->
+    <!--<update id="updateByMaterialsName" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
+    <!--update materials m,materials_stock ms,store_item s,borrow_item b-->
+    <!--set m.price = #{singlePrice},-->
+    <!--ms.stock_num = #{stockNum},-->
+    <!--s.amount= #{storeNum},-->
+    <!--b.amount= #{borrowNum}-->
+    <!--where m.name = #{name}-->
+    <!--and m.id = ms.material_id-->
+    <!--and m.id = s.material_id-->
+    <!--and m.id = b.material_id-->
+    <!--</update>-->
+
+    <!--对materials元素的删除-->
+    <delete id="deleteMaterialsByName" parameterType="com.sujianhui.materialsManagement.model.Materials">
+        DELETE FROM materials WHERE name = #{materialsName}
+    </delete>
+</mapper>

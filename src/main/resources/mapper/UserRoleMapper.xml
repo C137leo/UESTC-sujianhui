@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sujianhui.materialsManagement.dao.UserRoleMapper">
+    <select id="login" resultType="java.lang.Long" parameterType="com.sujianhui.materialsManagement.model.UserRole">
+        SELECT id FROM user WHERE name = #{username} and password = #{password}
+    </select>
+
+    <select id="selectAdminByAdminName" resultType="com.sujianhui.materialsManagement.model.UserRole" parameterType="java.lang.String">
+        SELECT * FROM userRole WHERE userName = #{username}
+    </select>
+
+    <insert id="creatUserRole" useGeneratedKeys = "true" keyProperty = "id" keyColumn = "id" parameterType="com.sujianhui.materialsManagement.model.UserRole">
+        INSERT INTO user_role values(#{id},#{uid},#{rid})
+    </insert>
+
+    <select id="selectUserByAdminName" resultType="com.sujianhui.materialsManagement.model.User" parameterType="java.lang.String">
+        SELECT * FROM user LEFT JOIN  userRole ON user.userName=userRole.userName WHERE user.userName=#{username}
+    </select>
+
+</mapper>

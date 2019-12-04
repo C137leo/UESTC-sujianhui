@@ -1,0 +1,16 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+    <meta charset="UTF-8">
+    <head>
+    <title>用户注册</title>
+</head>
+<body>
+<form th:action="@{/registeUser}" method="post">
+    用户名:<input name="username" type="text"/><br>
+    密码:<input name="password" type="password"> <br>
+    确认密码:<input name="confirmPassword" type="password"> <br>
+    管理员密码:<input name="adminPassword" type="password"> <br>
+    <input type="submit" value="注册">
+</form>
+</body>
+</html>
