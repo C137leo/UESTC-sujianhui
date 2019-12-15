@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -36,113 +36,27 @@
 <body>
 
 
-<ul class="nav navbar-nav navbar-right">
-    <li><a data-toggle="modal" href="/firstPage">
-        <span class="glyphicon glyphicon-user"></span>跳转</a></li>
-    <!--注释掉的部分是模态框的提示现在测试跳转页面的功能-->
-    <!--<li><a data-toggle="modal" data-target="#register"><span-->
-        <!--class="glyphicon glyphicon-user"></span> 注册</a></li>-->
-    <!--<li><a data-toggle="modal" data-target="#login"><span-->
-            <!--class="glyphicon glyphicon-log-in"></span> 登录</a></li>-->
-    <li><a data-toggle="modal" href="/register"><span
-            class="glyphicon glyphicon-user"></span> 注册</a></li>
-    <li><a data-toggle="modal" href="/materialsTbl"><span
-            class="glyphicon glyphicon-log-in"></span> 登录</a></li>
-</ul>
-<!-- 登录窗口 -->
-<div id="login" class="modal fade">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-title">
-                <h1 class="text-center">登录</h1>
-            </div>
-            <div class="modal-body">
-                <form class="form-group" id="loginForm1" name="loginForm" method="post" action="">
-                    <div class="form-group">
-                        <label for="username">用户名</label>
-                        <div class="">
-                            <input class="form-control" id="username" name="username" type="text" placeholder="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">密码</label>
-                        <div class="">
-                            <input class="form-control" id="password" name="password" type="password" placeholder="">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminPassword">管理员密码</label>
-                        <div class="">
-                            <input class="form-control" id="adminPassword" name="adminPassword" type="password" placeholder="">
-                        </div>
-                    </div>
-                    <div class="form-group text-right">
-                        <button class="btn btn-primary" name="loginButton" type="submit">登录</button>
-                        <button class="btn btn-danger" data-dismiss="modal">取消</button>
-                    </div>
-                    <a href="" data-toggle="modal" data-dismiss="modal" data-target="#register">还没有账号？点我注册</a>
-                </form>
-            </div>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">宿舍管理中心</span>
+            </button>
+            <a class="navbar-brand" href="/">宿舍管理中心</a>
         </div>
-    </div>
-</div>
-<!-- 注册窗口 -->
-<div id="register" class="modal fade" tabindex="-1">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-title">
-                <h1 class="text-center">注册</h1>
-            </div>
-            <div class="modal-body">
-                <form class="form-group" action="" method="post" name="registerForm1" id="registerForm">
-                    <div class="form-group">
-                        <label for="username1">用户名</label>
-                        <div class="">
-                            <input class="form-control" type="text" id="username1" name="username1"
-                                   placeholder="6-15位字母或数字">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password1">密码</label>
-                        <div class="">
-                            <input class="form-control" type="password" name="password1" id="password1"
-                                   placeholder="至少6位字母或数字">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">再次输入密码</label>
-                        <div class="">
-                            <input class="form-control" type="password" name="confirmPassword" id="confirmPassword"
-                                   placeholder="至少6位字母或数字">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="adminPassword1">管理员密码</label>
-                        <div class="">
-                            <input class="form-control" id="adminPassword1" name="adminPassword" type="password" placeholder="">
-                        </div>
-                    </div>
-                    <a href="" data-toggle="modal" data-dismiss="modal" data-target="#login">已有账号？点我登录</a>
-                    <div class="form-group text-right">
-                        <button class="btn btn-primary" name="registerButton" type="submit">提交</button>
-                        <button class="btn btn-danger" data-dismiss="modal">取消</button>
-                    </div>
 
-                </form>
-            </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a data-toggle="modal" href="/register"><span
+                        class="glyphicon glyphicon-user"></span> 注册</a></li>
+                <li><a data-toggle="modal" href="/materialsTbl"><span
+                        class="glyphicon glyphicon-log-in"></span> 登录</a></li>
+            </ul>
         </div>
     </div>
-</div>
+</nav>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
 <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <script src="../static/js/jquery.validate.js"></script>
@@ -150,113 +64,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
 <script src="../static/js/additional-methods.js"></script>
 <script type="text/javascript">
-
-    $(document).ready(function () {
-        $("#loginForm1").validate({
-            rules: {
-                username: {
-                    required: true,
-                    minlength: 2
-                },
-                password: {
-                    required: true,
-                    minlength: 5
-                }
-            },
-            messages: {
-                username: {
-                    required: "Please enter a username",
-                    minlength: "Your username must consist of at least 2 characters"
-                },
-                password: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long"
-                }
-
-            },
-            errorElement: "em",
-            errorPlacement: function (error, element) {
-                // Add the `help-block` class to the error element
-                error.addClass("help-block");
-                element.parents().addClass("has-feedback");
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).parents().addClass("has-error").removeClass("has-success");
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).parents().addClass("has-success").removeClass("has-error");
-            }
-        });
-
-        $("#registerForm1").validate({
-            rules: {
-                username1: {
-                    required: true,
-                    minlength: 2
-                },
-                password1: {
-                    required: true,
-                    minlength: 5
-                },
-                confirmPassword: {
-                    required: true,
-                    minlength: 5,
-                    equalTo: "#password1"
-                }
-            },
-            messages: {
-                username1: {
-                    required: "Please enter a username",
-                    minlength: "Your username must consist of at least 2 characters"
-                },
-                password1: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long"
-                },
-                confirmPassword: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 5 characters long",
-                    equalTo: "Please enter the same password as above"
-                }
-            },
-            errorElement: "em",
-            errorPlacement: function (error, element) {
-                // Add the `help-block` class to the error element
-                error.addClass("help-block");
-
-                // Add `has-feedback` class to the parent div.form-group
-                // in order to add icons to inputs
-                element.parents().addClass("has-feedback");
-
-                if (element.prop("type") === "checkbox") {
-                    error.insertAfter(element.parent("label"));
-                } else {
-                    error.insertAfter(element);
-                }
-
-                // Add the span element, if doesn't exists, and apply the icon classes to it.
-                if (!element.next("span")[0]) {
-                    $("<span class='glyphicon glyphicon-remove form-control-feedback'></span>").insertAfter(element);
-                }
-            },
-            success: function (label, element) {
-                // Add the span element, if doesn't exists, and apply the icon classes to it.
-                if (!$(element).next("span")[0]) {
-                    $("<span class='glyphicon glyphicon-ok form-control-feedback'></span>").insertAfter($(element));
-                }
-            },
-            highlight: function (element, errorClass, validClass) {
-                $(element).parents().addClass("has-error").removeClass("has-success");
-                $(element).next("span").addClass("glyphicon-remove").removeClass("glyphicon-ok");
-            },
-            unhighlight: function (element, errorClass, validClass) {
-                $(element).parents().addClass("has-success").removeClass("has-error");
-                $(element).next("span").addClass("glyphicon-ok").removeClass("glyphicon-remove");
-            }
-        });
-
-    });
-
 
 
 </script>

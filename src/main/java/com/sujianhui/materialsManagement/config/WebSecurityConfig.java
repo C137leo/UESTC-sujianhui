@@ -32,13 +32,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/","/register","/registeUser").permitAll()
-                .antMatchers("/firstPage").hasRole("admin")
+                .antMatchers("/","/register","/registeUser","/logout","/searchMaterials").permitAll()
+                .antMatchers("/searchTbl").hasRole("ADMIN")
+                .antMatchers("/searchTbl").hasRole("USER")
+                .antMatchers("/materialsTbl").hasRole("ADMIN")
+                .antMatchers("/materialsTbl").hasRole("USER")
                 .anyRequest().authenticated();
         http
                 //自定义登录界面
                 //.loginProcessingUrl("tologin)中的地址只需要和html中的表单提交请求地址一样就可以了
-                .formLogin().loginPage("/login").loginProcessingUrl("/tologin").defaultSuccessUrl("/showMaterialsList").failureUrl("/login").permitAll()
-                .and().logout().permitAll();
+                .formLogin().loginPage("/login").loginProcessingUrl("/tologin").defaultSuccessUrl("/materialsTbl").failureUrl("/login").permitAll()
+                ;
+        http
+                .logout() .permitAll();
     }
 }

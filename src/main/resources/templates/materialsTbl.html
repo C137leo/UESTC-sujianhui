@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>材料列表</title>
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="expires" content="0">
+    <!--解决403错误方法-->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <link type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
           rel="stylesheet">
@@ -17,7 +21,7 @@
 </head>
 <body>
 
-<!-- 员工添加的模态框 -->
+<!-- 物资添加的模态框 -->
 <div class="modal fade" id="materialsAddModal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -27,14 +31,14 @@
                         aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">员工添加</h4>
+                <h4 class="modal-title" id="myModalLabel">添加物资</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" id="addMaterials-form">
                     <div class="form-group">
                         <label for="materialsName_add_input" class="col-sm-2 control-label">物品名称</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsName" class="form-control"
+                            <input type="text" name="name" class="form-control"
                                    id="materialsName_add_input" placeholder="materialsName"> <span
                                 id="helpBlock1" class="help-block"></span>
                         </div>
@@ -42,7 +46,7 @@
                     <div class="form-group">
                         <label for="materialsPrice_add_input" class="col-sm-2 control-label">单价</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsPrice" class="form-control"
+                            <input type="text" name="singlePrice" class="form-control"
                                    id="materialsPrice_add_input" placeholder="materialsPrice"> <span
                                 id="helpBlock2" class="help-block"></span>
                         </div>
@@ -50,7 +54,7 @@
                     <div class="form-group">
                         <label for="materialsStockNum_add_input" class="col-sm-2 control-label">现库存数量</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsStockNum" class="form-control"
+                            <input type="text" name="stockNum" class="form-control"
                                    id="materialsStockNum_add_input" placeholder="materialsStockNum"> <span
                                 id="helpBlock3" class="help-block"></span>
                         </div>
@@ -64,7 +68,7 @@
         </div>
     </div>
 </div>
-<!-- 员工修改的模态框 -->
+<!-- 物资修改的模态框 -->
 <div class="modal fade" id="materialsUpdateModal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
@@ -74,14 +78,14 @@
                         aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title">员工修改</h4>
+                <h4 class="modal-title">编辑物资</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" id="updateMaterials-form">
                     <div class="form-group">
                         <label for="materialsName_update_input" class="col-sm-2 control-label">物品名称</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsName" class="form-control"
+                            <input type="text" name="name" class="form-control"
                                    id="materialsName_update_input" placeholder="materialsName"> <span
                                 id="helpBlock4" class="help-block"></span>
                         </div>
@@ -89,7 +93,7 @@
                     <div class="form-group">
                         <label for="materialsPrice_update_input" class="col-sm-2 control-label">单价</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsPrice" class="form-control"
+                            <input type="text" name="singlePrice" class="form-control"
                                    id="materialsPrice_update_input" placeholder="materialsPrice"> <span
                                 id="helpBlock5" class="help-block"></span>
                         </div>
@@ -97,7 +101,7 @@
                     <div class="form-group">
                         <label for="materialsStockNum_update_input" class="col-sm-2 control-label">现库存数量</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsStockNum" class="form-control"
+                            <input type="text" name="stockNum" class="form-control"
                                    id="materialsStockNum_update_input" placeholder="materialsStockNum"> <span
                                 id="helpBlock6" class="help-block"></span>
                         </div>
@@ -105,7 +109,7 @@
                     <div class="form-group">
                         <label for="materialsBorrowNum_update_input" class="col-sm-2 control-label">借出数量</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsPrice" class="form-control"
+                            <input type="text" name="borrowNum" class="form-control"
                                    id="materialsBorrowNum_update_input" placeholder="materialsBorrowNum"> <span
                                 id="helpBlock7" class="help-block"></span>
                         </div>
@@ -113,7 +117,7 @@
                     <div class="form-group">
                         <label for="materialsStoreNum_update_input" class="col-sm-2 control-label">归还数量</label>
                         <div class="col-sm-10">
-                            <input type="text" name="materialsStoreNum" class="form-control"
+                            <input type="text" name="storeNum" class="form-control"
                                    id="materialsStoreNum_update_input" placeholder="materialsStoreNum"> <span
                                 id="helpBlock8" class="help-block"></span>
                         </div>
@@ -127,6 +131,7 @@
         </div>
     </div>
 </div>
+<!--导航条-->
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -134,28 +139,34 @@
                     data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">物资储备</span>
             </button>
-            <a class="navbar-brand" href="/">物资储备</a>
+            <a class="navbar-brand" href="/materialsTbl">物资储备</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <form class="navbar-form navbar-left">
+            <form class="navbar-form navbar-left" id="searchMaterialsForm" th:action="@{/searchMaterials}" method="post">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="物品名称">
+                    <input type="text" id="searchMaterialsInput" name="name" class="form-control" placeholder="物品名称">
                 </div>
-                <button type="submit" class="btn btn-default">搜索</button>
+                <button type="submit" id="searchMaterialsButton" class="btn btn-default" >搜索</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li th:if="${session.username!=null}">
-                    <a href="/publish">发表</a>
-                </li>
+                <!--为了以后发表问题-->
+                <!--<li th:if="${session.username!=null}">-->
+                    <!--<a href="/publish">发表</a>-->
+                <!--</li>-->
                 <li class="dropdown" th:if="${session.username!=null}">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                        aria-expanded="false" th:text="${session.username}"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">消息中心</a></li>
                         <li><a href="#">个人资料</a></li>
-                        <li><a href="#">退出登录</a></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                            <input type="submit" value="退出登录"/>
+                        </form>
+                        </li>
+                        <!--<li><a th:href="@{/logout}" class="a_post">退出登录</a></li>-->
                     </ul>
                 </li>
                 <li th:if="${session.username==null}"><a href="/login">登录</a></li>
@@ -174,10 +185,10 @@
         </div>
     </div>
     <!-- 两个按钮 -->
-    <div class="row">
-        <div class="col-md-4 col-md-offset-8">
-            <button class="btn btn-primary" id="materials_add_modal_btn">新增</button>
-            <button class="btn btn-danger" id="materials_delete_all_btn">删除</button>
+    <div class="row" sec:authorize="isAuthenticated()">
+        <div class="col-md-4 col-md-offset-8" >
+                <button class="btn btn-primary" id="materials_add_modal_btn"  sec:authorize="hasRole('ROLE_ADMIN')">新增</button>
+                <button class="btn btn-danger" id="materials_delete_all_btn" sec:authorize="hasRole('ROLE_ADMIN')">删除</button>
         </div>
     </div>
     <!-- 显示表格数据 -->
@@ -194,7 +205,7 @@
                     <th>借出数量</th>
                     <th>归还数量</th>
                     <th>总数量</th>
-                    <th>操作</th>
+                    <th sec:authorize="hasRole('ROLE_ADMIN')">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -251,24 +262,39 @@
     </div>
 </div>
 <script type="text/javascript">
-    var totalRecord, currentPage;
+    var totalRecord, currentPage,pageSize;
+    //解决springSEcurity造成的403错误
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
     //1.页面加载完成以后，直接去发送一个ajax请求，要到分页数据
     $(function () {
         //一进来就去第一页
         to_page(1);
-        // 手机号码验证
+
+        //下面为表单的格式校验内容
+        // 自定义的手机号码验证
         jQuery.validator.addMethod("isPhone", function (value, element) {
             var length = value.length;
             return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));
         }, "请正确填写您的手机号码。");
-
-        // 电话号码验证
+        //姓名验证
         jQuery.validator.addMethod("isName", function (value, element) {
             var str = value;
             if (str==" ")
                 return false;
             return this.optional(element)
         }, "物资名称不能为空。");
+        jQuery.validator.addMethod("isNum", function (value, element) {
+            var str = value;
+            if (str==" ")
+                return false;
+            if (!/[0-9]/.test(str))
+                 return fasle;
+            return this.optional(element)
+        }, "物资数量或价格不能为空，且必须为数字。");
         // 匹配密码，以字母开头，长度在6-12之间，必须包含数字和特殊字符。
         jQuery.validator.addMethod("isPwd", function (value, element) {
             var str = value;
@@ -281,42 +307,68 @@
             return this.optional(element) || /[0-9]/.test(str);
         }, "密码长度在6-12之间。以数字结尾。");
 
+        //新增物资的jquery.validator校验
         $("#addMaterials-form").validate({
             errorElement: 'span',
             errorClass: 'help-block',
 
             rules: {
-                materialsName: {
+                name: {
                     required: true,
-                    isName:true,
+                    rangelength:[1,10],
                 },
-                materialsStockNum: {
+                singlePrice: {
                     required: true,
+                    number:true,
+                },
+                stockNum: {
+                    required: true,
+                    digits:true,
                 },
             },
             messages: {
-                materialsName: "请输入物资名称",
-                materialsStockNum: {
+                name: "请输入物资名称",
+                stockNum: {
                     required: "请输入物资现存数量",
+                },
+                singleNum: {
+                    required: "请输入单价，不清楚的话先填0",
+                    number:"请输入正确的数字",
                 },
             },
             errorPlacement: function (error, element) {
                 //清空上一个span样式
-                element.next().remove();
-                element.after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
-                element.closest('.form-group').append(error);
+                    element.next().remove();
+                    element.after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+                    element.closest('.form-group').append(error);
             },
             highlight: function (element) {
                 $(element).closest('.form-group').addClass('has-error has-feedback');
             },
             success: function (label) {
                 var el = label.closest('.form-group').find("input");
-                //清空上一个span样式
+                var button=$("#materials_save_btn").attr("ajax-va");
                 el.next().remove();
                 el.after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
                 label.closest('.form-group').removeClass('has-error').addClass("has-feedback has-success");
                 //这个确实没太看明白label.remove是啥意思。
                 label.remove();
+                if (button=="success"){
+                    //清空上一个span样式
+                    $("#materialsName_add_input").next().remove();
+                    $("#materialsName_add_input").after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+                    label.closest('.form-group').removeClass('has-error').addClass("has-feedback has-success");
+                    //这个确实没太看明白label.remove是啥意思。
+                    label.remove();
+                }else if (button=="error"){
+                    //清空上一个span样式
+                    $("#materialsName_add_input").next().remove();
+                    $("#materialsName_add_input").after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+                    $("#materialsName_add_input").closest('.form-group').removeClass('has-success').addClass("has-feedback has-error");
+                    //这个确实没太看明白label.remove是啥意思。
+                    label.remove();
+                }
+
             },
 
             submitHandler: function (form) {
@@ -325,33 +377,42 @@
             }
 
         })
+        //修改物资的jquery.validator校验
         $("#updateMaterials-form").validate({
             errorElement: 'span',
             errorClass: 'help-block',
 
             rules: {
-                materialsName: {
+                name: {
                     required: true,
+                    rangelength:[1,10],
                 },
-                materialsStockNum: {
+                stockNum: {
                     required: true,
+                    digits:true,
                 },
-                materialsStoreNum: {
+                storeNum: {
                     required: true,
+                    digits:true,
                 },
-                materialsBorrowNum: {
+                borrowNum: {
                     required: true,
+                    digits:true,
+                },
+                singlePrice: {
+                    required: true,
+                    number:true,
                 },
             },
             messages: {
-                materialsName: "请输入物资名称",
-                materialsStockNum: {
+                name: "请输入物资名称",
+                stockNum: {
                     required: "请输入物资现存数量",
                 },
-                materialsStoreNum: {
+                storeNum: {
                     required: "请输入物资归还数量",
                 },
-                materialsBorrowNum: {
+                borrowNum: {
                     required: "请输入物资借出数量",
                 },
 
@@ -376,11 +437,12 @@
             },
             submitHandler: function (form) {
                 form.submit();
+                return false;
             }
         })
 
     });
-
+    //根据pagehelper的方法由后端返回有用的信息
     function to_page(pn) {
         $.ajax({
             url: '/showMaterialsList',
@@ -389,10 +451,17 @@
             // dataType:"json",
             ////请求成功时执行该函数内容，result即为服务器返回的json对象
             success: function (result) {
-                //console.log(result);
-                //1.解析并显示员工信息
+                // console.log(result);
+                //1.解析并显示物品信息
                 //2.解析并显示分页信息
-                build_materials_table(result);
+                var isAdmin=result.isAdmin;
+                console.log(result);
+                console.log(isAdmin);
+                if (isAdmin==2){
+                    build_materials_table(result);
+                } if(isAdmin==1){
+                    build_materials_table_User(result);
+                }
                 //解析并显示分页信息
                 bulid_page_info(result);
                 //解析并显示分页条
@@ -428,7 +497,7 @@
                      删除
                      </button>
                      */
-                    var editBtn = $("<button></button>")
+                    var editBtn = $("<button ></button>")
                         .addClass(
                             "btn btn-primary btn-sm edit_btn")
                         .append(
@@ -448,18 +517,76 @@
                                 .append("删除"));
                     //为删除按钮添加一个属性表示删除当前的物品id
                     delBtn.attr("del-id", item.id);
+                    var btnTD = $("<td></td>").append(editBtn)
+                            .append(" ").append(delBtn);
+                        //append执行方法完成以后还是返回原来的元素
+                        $("<tr></tr>").append(checkBoxTd).append(
+                            materialsIdTd).append(materialsNameTd).append(
+                            materialsSinglePrice).append(materialsStockNum).append(materialsBorrowNum).append(materialsStoreNum)
+                            .append(materialsTotalNum).append(btnTD).appendTo(
+                            "#materials_table tbody");
 
+                });
+    }
+
+    //显示表格信息(用户)
+    function build_materials_table_User(result) {
+        //构建之前先清空
+        $("#materials_table tbody").empty();
+        var materials = result.extend.pageInfo.list;
+        $
+            .each(
+                materials,
+                function (index, item) {
+                    var checkBoxTd = $("<td><input type='checkbox' class='check_item'/></td>");
+                    var materialsIdTd = $("<td></td>").append(item.id);
+                    var materialsNameTd = $("<td></td>").append(item.name);
+                    var materialsSinglePrice = $("<td></td>").append(item.singlePrice);
+                    var materialsStockNum = $("<td></td>").append(item.stockNum);
+                    var materialsBorrowNum = $("<td></td>").append(item.borrowNum);
+                    var materialsStoreNum = $("<td></td>").append(item.storeNum);
+                    var materialsTotalNum = $("<td></td>").append(item.stockNum + item.storeNum);
+                    /**
+                     <button class="btn btn-primary btn-sm">
+                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                     7                                编辑
+                     </button>
+                     <button class="btn btn-danger btn-sm">
+                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                     删除
+                     </button>
+                     */
+                    var editBtn = $("<button ></button>")
+                        .addClass(
+                            "btn btn-primary btn-sm edit_btn")
+                        .append(
+                            $("<span></span>")
+                                .addClass(
+                                    "glyphicon glyphicon-pencil")
+                                .append("编辑"));
+                    //为编辑按钮添加一个自定义的属性，来表示当前物品的id
+                    editBtn.attr("edit-id", item.id);
+                    var delBtn = $("<button></button>")
+                        .addClass(
+                            "btn btn-danger btn-sm delete_btn")
+                        .append(
+                            $("<span></span>")
+                                .addClass(
+                                    "glyphicon glyphicon-trash")
+                                .append("删除"));
+                    //为删除按钮添加一个属性表示删除当前的物品id
+                    delBtn.attr("del-id", item.id);
                     var btnTD = $("<td></td>").append(editBtn)
                         .append(" ").append(delBtn);
                     //append执行方法完成以后还是返回原来的元素
                     $("<tr></tr>").append(checkBoxTd).append(
                         materialsIdTd).append(materialsNameTd).append(
                         materialsSinglePrice).append(materialsStockNum).append(materialsBorrowNum).append(materialsStoreNum)
-                        .append(materialsTotalNum).append(btnTD).appendTo(
+                        .append(materialsTotalNum).appendTo(
                         "#materials_table tbody");
+
                 });
     }
-
     //解析显示分页信息
     function bulid_page_info(result) {
         //构建之前先清空
@@ -470,6 +597,7 @@
             + result.extend.pageInfo.total + "记录")
         totalRecord = result.extend.pageInfo.total;
         currentPage = result.extend.pageInfo.pageNum;
+        pageSize=result.extend.pageInfo.pageSize;
     }
 
     //解析显示分页条,点击分页要能去下一页。。
@@ -532,6 +660,22 @@
         $(ele).find(".help-block").text("");
     }
 
+    // $(".a_post").on("click",function(event){
+    //     event.preventDefault();//使a自带的方法失效，即无法调整到href中的URL(http://www.baidu.com)
+    //     $.ajax({
+    //         type: "POST",
+    //         url: "/logout",
+    //         success: function(result){
+    //             //请求正确之后的操作
+    //         },
+    //         error: function(result){
+    //             //请求失败之后的操作
+    //         }
+    //     });
+    // });
+
+
+    //新增物资的按钮的点击事件
     $("#materials_add_modal_btn").click(function() {
         //清除表单数据（表单重置）(应将表单完整重置，表单的数据，表单的样式)
         reset_form("#materialsAddModal form");
@@ -543,6 +687,8 @@
             backdrop : "static"
         });
     });
+
+    //编辑物资信息的按钮的点击事件
     //1、我们是按钮创建之前就绑定了click，所以绑不上
     //1）、我们可以在创建按钮的时候绑定。2）、绑定点击、live()
     //jquery新版本没有live，使用on进行替代
@@ -552,46 +698,307 @@
         //1、查出部门信息，显示部门列表
         //getDepts("#empUpdateModal select");
         //2、查出员工信息，显示员工信息
-        //getEmp($(this).attr("edit-id"));
+        getMaterials($(this).attr("edit-id"));
         //3、把员工的id传递给模态框的更新按钮
-        //$("#emp_update_btn").attr("edit-id", $(this).attr("edit-id"));
+        $("#materials_update_btn").attr("edit-id", $(this).attr("edit-id"));
         $("#materialsUpdateModal").modal({
             backdrop : "static"
         });
     });
 
-    function getEmp(id) {
+    //取到物资信息并返回
+    function getMaterials(id) {
         $.ajax({
-            url : "${APP_PATH}/emp/" + id,
+            url : "/getMaterials/" + id,
             type : "GET",
             success : function(result) {
                 //console.log(result);
-                var empData = result.extend.emp;
-                $("#empName_update_static").text(empData.empName);
-                $("email_update_input").val(empData.email);
-                $("#empUpdateModal input[name=gender]").val(
-                    [ empData.gender ]);
-                $("#empUpdateModal select").val([ empData.dId ]);
+                var materialsData = result.extend.materialsGet;
+                $("#materialsName_update_input").val(materialsData.name);
+                $("#materialsPrice_update_input").val(materialsData.singlePrice);
+                $("#materialsStockNum_update_input").val(materialsData.stockNum);
+                $("#materialsStoreNum_update_input").val(materialsData.storeNum);
+                $("#materialsBorrowNum_update_input").val(materialsData.borrowNum);
+
             }
         });
     }
 
+    //编辑物资信息的模态框里表单的提交按钮
     $("#materials_update_btn").click(function() {
+        $("#materialsName_add_input").next().remove();
+        $("#materialsPrice_add_input").next().remove();
+        $("#materialsStockNum_add_input").next().remove();
+        //保存更新员工时的validate表单校验，前端不通过就无法提交
+        var flag = $("#updateMaterials-form").valid();
+        if(!flag){
+            //没有通过验证
+            return;
+        }
         //发送ajax请求保存更新的员工数据、
         $.ajax({
             url : "/materialsUpdate/" + $(this).attr("edit-id"),
             type : "PUT",
             data : $("#materialsUpdateModal form").serialize(),
+            // data : {_method:"PUT",materialsDTO:$("#materialsUpdateModal form").serialize()},
             success : function(result) {
                 //alert(result.msg);
                 //1.关闭对话框
-                $("#empUpdateModal").modal("hide");
-
+                $("#materialsUpdateModal").modal("hide");
+                console.log($("#materialsUpdateModal form").serialize());
                 //2。返回更新的页面
                 to_page(currentPage);
             }
         });
     });
+
+
+    //搜索框的提交按钮
+    // $("#searchMaterialsButton").click(function() {
+    //     //保存更新员工时的validate表单校验，前端不通过就无法提交
+    //     // var flag = $("#searchMaterialsForm").valid();
+    //     // if(!flag){
+    //     //     //没有通过验证
+    //     //     return;
+    //     // }
+    //     //发送ajax请求查询数据、
+    //     var name= $("#searchMaterialsForm").serialize();
+    //     $.ajax({
+    //         url : "/searchMaterials" ,
+    //         data :  name,
+    //         type : "POST",
+    //         success : function(result) {
+    //             //alert(result.msg);
+    //             //1.算出物品所在的页数
+    //             console.log($("#searchMaterialsForm").serialize());
+    //             var materialsId=result.extend.materials.id;
+    //             console.log(result.extend.materials);
+    //             var num=materialsId%pageSize;
+    //             var page=materialsId/pageSize;
+    //             if(materialsId<pageSize){
+    //                 to_page(1);
+    //             }if (num!=0&&num<pageSize) {
+    //                 to_page(page+1);
+    //             }else{
+    //                 //2。返回更新的页面
+    //                 to_page(page);
+    //             }
+    //             //3.为那一行表格添加.success属性
+    //             //4.此处注意，应在to_page()函数里面加上清空之前的表格样式。
+    //
+    //         }
+    //     });
+    // });
+    //搜索框的提交按钮
+    // $("#searchMaterialsButton").click(function () {
+    //     var name = $("#searchMaterialsForm").serialize();
+    //     $.ajax({
+    //         url: "/searchMaterials",
+    //         data: name,
+    //         type: "POST",
+    //         success: function (result) {
+    //             // localStorage.setItem('materials', JSON.stringify(result));
+    //             //window.location.href="/searchTbl";
+    //             // localStorage.clear();
+    //             //alert(result.msg);
+    //             //1.算出物品所在的页数
+    //             //3.为那一行表格添加.success属性
+    //             //4.此处注意，应在to_page()函数里面加上清空之前的表格样式。
+    //         }
+    //     });
+    // });
+    //校验表单数据
+    // function validate_add_form() {
+    //     //拿到要校验的数据，使用正则表达式
+    //     var empName = $("#empName_add_input").val();
+    //     var regName = /(^[a-zA-Z0-9_-]{6,16}$)|(^[\u2E80-\u9FFF]{2,5})/;
+    //     if (!regName.test(empName)) {
+    //         show_validate_msg("#empName_add_input", "error",
+    //             "用户名可以是2-5位的中文或者6-16位英文和数字的组合");
+    //         //alert("用户名可以是2-5位的中文或者6-16位英文和数字的组合")
+    //         //$("#empName_add_input").parent().addClass("has-error");
+    //         //$("#empName_add_input").next("span").text("用户名可以是2-5位的中文或者6-16位英文和数字的组合");
+    //         return false;
+    //     } else {
+    //         show_validate_msg("#empName_add_input", "success", "");
+    //         //$("#empName_add_input").parent().addClass("has-success");
+    //         //$("#empName_add_input").next("span").text("");
+    //     }
+    //     ;
+    //     // //校验邮箱信息
+    //     // var email = $("#email_add_input").val();
+    //     // var regEmail = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
+    //     // if (!regEmail.test(email)) {
+    //     //     //alert("邮箱格式不正确");
+    //     //     //应该清空这个元素之前的样式
+    //     //     show_validate_msg("#email_add_input", "error", "邮箱格式不正确");
+    //     //     //$("#email_add_input").parent().addClass("has-error");
+    //     //     //$("#email_add_input").next("span").text("用户名可以是2-5位的中文或者6-16位英文和数字的组合");
+    //     //     return false;
+    //     // } else {
+    //     //     show_validate_msg("#email_add_input", "success", "");
+    //     //     //$("#email_add_input").parent().addClass("has-success");
+    //     //     //$("#email_add_input").next("span").text("");
+    //     // }
+    //     ;
+    //     return true;
+    // }
+
+    function show_validate_msg(ele, status, msg) {
+        $(ele).parent().parent().removeClass("has-success has-error");
+        $(ele).parent().removeClass("has-success has-error");
+        $(ele).next("span").text("");
+        if ("success" == status) {
+            $(ele).parent().parent().addClass("has-success");
+            $(ele).parent().addClass("has-success");
+            $(ele).next().remove();
+            $(ele).after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+            $(ele).next("span").text(msg);
+        } else if ("error" == status) {
+            $(ele).parent().parent().addClass("has-error");
+            $(ele).parent().addClass("has-error");
+            $(ele).next().remove();
+            $(ele).after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+            $(ele).next("span").text(msg);
+        }
+    }
+
+    //以下内容为员工添加的表单
+    //校验用户名是否可用
+    $("#materialsName_add_input").change(
+        function() {
+            //判断之前的ajax用户名校验是否成功，如果成功
+            //发送ajax请求校验用户是否可用
+            var name = this.value;
+            $.ajax({
+                url : "/checkMaterialsName",
+                data : "name=" + name,
+                type : "POST",
+                success : function(result) {
+                    if (result.code == 100) {
+                        show_validate_msg("#materialsName_add_input",
+                            "success", "用户名可以使用");
+                        $("#materials_save_btn").attr("ajax-va", "success");
+                    } else {
+                        show_validate_msg("#materialsName_add_input",
+                            "error", result.extend.va_msg);
+                        $("#materials_save_btn").attr("ajax-va", "error");
+                    }
+                }
+            });
+        });
+
+    //点击保存，保存员工。
+    $("#materials_save_btn")
+        .click(
+            function() {
+                var flag=$("#addMaterials-form").valid();
+                if(!flag){
+                    //没有通过验证
+                    return;
+                }
+                //1.模态框中填写的表单数据提交给服务器进行保存
+                //先对要提交给服务器的数据进行校验
+                //if(!validate_add_form()){
+                //return false;
+                //};
+                if ($(this).attr("ajax-va") == "error") {
+                    return false;
+                }
+                //2.发送ajax请求保存员工
+                $
+                    .ajax({
+                        url : "/createMaterials",
+                        type : "POST",
+                        data : $("#materialsAddModal form")
+                            .serialize(),
+                        success : function(result) {
+                            //先判断是否成功
+                            if (result.code == 100) {
+                                //alert(result.msg);
+                                //员工保存成功；
+                                //1.关闭模态框
+                                $("#materialsAddModal").modal('hide');
+                                //2.来到最后一页显示刚才保存的数据
+                                //发送ajax请求显示最后一页数据即可
+                                //
+                                to_page(totalRecord);
+                            }
+                        }
+                    })
+            });
+
+    //单个删除
+    $(document).on("click", ".delete_btn", function() {
+        //1.弹出是否确认删除对话框
+        var name =$(this).parents("tr").find("td:eq(2)")
+            .text();
+        var id = $(this).attr("del-id");
+        //alert($(this).parent("tr").find("td:eq(1)").text());
+        if (confirm("确认删除【" + name + "】吗？")) {
+            //确认，发送ajax请求即可
+            $.ajax({
+                url : "/deleteMaterials/" + id,
+                type : "DELETE",
+                success : function(result) {
+                    alert(result.msg);
+                    to_page(currentPage);
+                }
+            });
+        }
+    });
+
+    //完成全选全不选功能
+    $("#check_all").click(function() {
+        //attr获取checked是undefined；
+        //我们这些dom原生的属性，attr获取自定义属性的值；
+        //prop修改和读取dom原生属性的值
+        //$(this).prop("checked");
+        //下面这句话的意思是：所有check_item的值都是当前这个check选框的值
+        $(".check_item").prop("checked", $(this).prop("checked"));
+    });
+
+    //如果都是checked的状态则让check_all选项也勾选上
+    $(document)
+        .on(
+            "click",
+            "click_item",
+            function() {
+                var flag = $(".check_item:checked").length == $(".click_item").length;
+                $("#check_all").prop("checked", flag);
+            });
+
+    //点击批量删除就全部删除
+    $("#materials_delete_all_btn").click(
+        function() {
+            var empNames = "";
+            var del_idstr = "";
+            $.each($(".check_item:checked"), function() {
+                empNames += $(this).parents("tr").find("td:eq(2)")
+                        .text()
+                    + ",";
+                del_idstr += $(this).parents("tr").find("td:eq(1)")
+                        .text()
+                    + "-";
+            });
+            //去除empnames多余的，
+            empNames = empNames.substring(0, empNames.length - 1);
+            del_idstr = del_idstr.substring(0, del_idstr.length - 1);
+            if (confirm("确认删除【" + empNames + "】吗？")) {
+                //发送ajax请求删除
+                $.ajax({
+                    url : "/deleteMaterials/" + del_idstr,
+                    type : "DELETE",
+                    success : function(result) {
+                        alert(result.msg);
+                        to_page(currentPage);
+                    }
+
+                });
+            }
+        });
+
+
 </script>
 </body>
 </html>

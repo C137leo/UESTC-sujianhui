@@ -21,7 +21,16 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserRoleService userRoleService;
-    //注册操作
+
+    /**注册操作
+     *
+     * @param username
+     * @param password
+     * @param adminPassword
+     * @param confirmPassword
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/registeUser",method = RequestMethod.POST)
     public String register(@RequestParam(value = "username") String username,
                            @RequestParam(value = "password") String password,
@@ -44,12 +53,12 @@ public class UserController {
                     userRoleService.createUserRole(userRoleUser);
                 }
                 //如果用户以管理员身份注册
-                if(adminPassword.equals("sujianhui107")){
+                if(adminPassword.equals("uestc")){
                     //注册时向user_role表中插入admin信息
                     UserRole userRoleAdmin = new UserRole(userService.findUserByName(username).getId(),(long) 2);
                     userRoleService.createUserRole(userRoleAdmin);
                 }
-                return "firstPage";
+                return "login";
             } else {
                 User user = new User();
                 Results results = userService.register(user);
@@ -65,20 +74,6 @@ public class UserController {
         List<User> userList=userService.getAll();
         return userList;
     }
-//    @PostMapping("/get-user")
-//    @ResponseBody
-//    public UserDTO getUser(@RequestParam String username,
-//                           @RequestParam String password,
-//                           Model model){
-//        UserDTO userDTO=userService.getUser(username);
-////        if (userDTO.getPassword().equals(password)){
-////            System.out.println(userDTO);
-////            model.addAttribute("username",userDTO.getUsername());
-////            model.addAttribute("roles",userDTO.getRoles());
-////        }
-//        return userDTO;
-//    }
-
     /**
      * 查看登录用户信息
      */

@@ -10,67 +10,96 @@
         <result property="storeNum" column="amount"/>
         <result property="borrowNum" column="b_amount"/>
     </resultMap>
-
-    <!--&lt;!&ndash;得到materials的id&ndash;&gt;-->
-    <!--<select id="selectIdByMaterialsName" resultType="java.lang.Long" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--SELECT id FROM materials WHERE name = #{name}-->
-    <!--</select>-->
-
-    <!--&lt;!&ndash;得到materials的单价&ndash;&gt;-->
-    <!--<select id="selectPriceByMaterialsName" resultType="java.lang.Long" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--SELECT price FROM materials WHERE name = #{name}-->
-    <!--</select>-->
-
-    <!--&lt;!&ndash;得到materials&ndash;&gt;-->
-    <!--<select id="findMaterialsByName" resultType="com.sujianhui.materialsManagement.dto.MaterialsDTO" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--SELECT * FROM materials WHERE name = #{name}-->
-    <!--</select>-->
-
-    <!--&lt;!&ndash;在materials表中添加materials&ndash;&gt;-->
-    <!--<insert id="createMaterials" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--INSERT INTO materials values(#{id},#{name},#{price},#{isDelete})-->
-    <!--</insert>-->
-    <!--&lt;!&ndash;在materials_stock表中添加materials表示目前存储的数量&ndash;&gt;-->
-    <!--<insert id="createMaterialsStock" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--INSERT INTO materials_stock values(#{id},#{materialId},#{stockNum})-->
-    <!--</insert>-->
-    <!--&lt;!&ndash;在store_item表中添加materials表示存进来的数量（包括归还和买进这类物品）&ndash;&gt;-->
-    <!--<insert id="createMaterialsStore" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--INSERT INTO store_item values(#{id},#{materialId},#{storeId},#{amount})-->
-    <!--</insert>-->
-    <!--&lt;!&ndash;在borrow_item表中添加materials表示借出去的数量（包括借出和消耗掉的这类物品）&ndash;&gt;-->
-    <!--<insert id="createMaterialsBorrow" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--INSERT INTO borrow_item values(#{id},#{materialId},#{borrowId},#{amount})-->
-    <!--</insert>-->
+    <!--在materials表中添加materials-->
+    <insert id="saveMaterials" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.model.MaterialsDTO">
+    INSERT INTO materials(id,name,price) values(#{id},#{name},#{singlePrice})
+    </insert>
+    <!--在materials_stock表中添加materials表示目前存储的数量-->
+    <insert id="createMaterialsStock" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.model.Stock">
+    INSERT INTO materials_stock values(#{id},#{materialId},#{stockNum})
+    </insert>
+    <!--在store_item表中添加materials表示存进来的数量（包括归还和买进这类物品）-->
+    <insert id="createMaterialsStore" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.model.Store">
+    INSERT INTO store_item(id,material_id,amount) values(#{id},#{materialId},#{storeNum})
+    </insert>
+    <!--在borrow_item表中添加materials表示借出去的数量（包括借出和消耗掉的这类物品）-->
+    <insert id="createMaterialsBorrow" useGeneratedKeys="true" keyProperty="id" keyColumn="id" parameterType="com.sujianhui.materialsManagement.model.Borrow">
+    INSERT INTO borrow_item(id,material_id,b_amount) values(#{id},#{materialId},#{borrowNum})
+    </insert>
 
     <!--从多表查询materials的所有信息-->
     <select id="getAllMaterials" resultMap="materialMap">
     select materials.id, materials.name,materials.price,ms.stock_num,s.amount,b.b_amount
     from materials
-    JOIN materials_stock AS ms ON materials.id = ms.id
+    JOIN materials_stock AS ms ON materials.id = ms.material_id
     JOIN store_item AS s ON materials.id = s.material_id
     JOIN borrow_item AS b ON materials.id = b.material_id
     </select>
-    <!---->
-    <!--<select id="getAllMaterials" resultType="com.sujianhui.materialsManagement.model.MaterialsDTO">-->
-    <!--select * from materialsDTO-->
-    <!--</select>-->
+
+    <!--从多表中查询单个material的所有信息-->
+    <select id="getMaterials" resultMap="materialMap" parameterType="java.lang.Integer">
+    select materials.name,materials.price,ms.stock_num,s.amount,b.b_amount
+    from materials
+    JOIN materials_stock AS ms ON materials.id = ms.material_id
+    JOIN store_item AS s ON materials.id = s.material_id
+    JOIN borrow_item AS b ON materials.id = b.material_id
+    WHERE materials.id=#{id}
+    </select>
+    <!--从多表中查询单个material的所有信息-->
+    <select id="getMaterialsId" resultType="java.lang.Integer" parameterType="java.lang.String">
+    select id
+    from materials
+    WHERE name=#{name}
+    </select>
+
+    <!--从多表中查询单个material的所有信息-->
+    <select id="selectMaterialsByName" resultType="com.sujianhui.materialsManagement.model.Materials" parameterType="java.lang.String">
+    select *
+    from materials
+    WHERE materials.name=#{name}
+    </select>
+
+    <!--从多表中用姓名查询单个material的所有信息-->
+    <select id="checkMaterials" resultMap="materialMap" parameterType="java.lang.String">
+    select materials.name,materials.price,ms.stock_num,s.amount,b.b_amount
+    from materials
+    JOIN materials_stock AS ms ON materials.id = ms.material_id
+    JOIN store_item AS s ON materials.id = s.material_id
+    JOIN borrow_item AS b ON materials.id = b.material_id
+    WHERE materials.name=#{name}
+    </select>
+
+    <!--从多表中用姓名查询单个material的所有信息,针对的方法不同-->
+    <select id="getMaterialsByName" resultMap="materialMap" parameterType="java.lang.String">
+    select materials.id,materials.name,materials.price,ms.stock_num,s.amount,b.b_amount
+    from materials
+    JOIN materials_stock AS ms ON materials.id = ms.material_id
+    JOIN store_item AS s ON materials.id = s.material_id
+    JOIN borrow_item AS b ON materials.id = b.material_id
+    WHERE materials.name=#{name}
+    </select>
+
 
     <!--多表的更新-->
-    <!--<update id="updateByMaterialsName" parameterType="com.sujianhui.materialsManagement.dto.MaterialsDTO">-->
-    <!--update materials m,materials_stock ms,store_item s,borrow_item b-->
-    <!--set m.price = #{singlePrice},-->
-    <!--ms.stock_num = #{stockNum},-->
-    <!--s.amount= #{storeNum},-->
-    <!--b.amount= #{borrowNum}-->
-    <!--where m.name = #{name}-->
-    <!--and m.id = ms.material_id-->
-    <!--and m.id = s.material_id-->
-    <!--and m.id = b.material_id-->
-    <!--</update>-->
+    <update id="updateMaterials" parameterType="com.sujianhui.materialsManagement.model.MaterialsDTO">
+    update materials
+    JOIN materials_stock AS ms ON materials.id = ms.material_id
+    JOIN store_item AS s ON materials.id = s.material_id
+    JOIN borrow_item AS b ON materials.id = b.material_id
+    set materials.price = #{singlePrice,jdbcType=DECIMAL},
+    materials.name = #{name,jdbcType=VARCHAR},
+    ms.stock_num = #{stockNum,jdbcType=INTEGER},
+    s.amount= #{storeNum,jdbcType=INTEGER},
+    b.b_amount= #{borrowNum,jdbcType=INTEGER}
+    where materials.id=#{id}
+    </update>
 
     <!--对materials元素的删除-->
-    <delete id="deleteMaterialsByName" parameterType="com.sujianhui.materialsManagement.model.Materials">
-        DELETE FROM materials WHERE name = #{materialsName}
+    <delete id="deleteMaterialsById" parameterType="java.lang.Integer">
+        DELETE materials,ms,s,b FROM materials
+        JOIN materials_stock AS ms ON materials.id = ms.material_id
+        JOIN store_item AS s ON materials.id = s.material_id
+        JOIN borrow_item AS b ON materials.id = b.material_id
+        WHERE materials.id= #{id}
     </delete>
 </mapper>
