@@ -183,7 +183,7 @@
         </div>
     </div>
     <div class="col-md-4 col-md-offset-8">
-        <button class="btn btn-primary" id="materials_back_btn" href="/materilasTbl">返回</button>
+        <button class="btn btn-primary" id="materials_back_btn"  onclick="{location.href='/materialsTbl'}" >返回</button>
     </div>
 </div>
 <script type="text/javascript">
@@ -194,7 +194,7 @@
         xhr.setRequestHeader(header, token);
     });
     $(function () {
-        var numb = JSON.parse(localStorage.getItem('materials'));
+        // var numb = JSON.parse(localStorage.getItem('materials'));
         // $("#materialsId").text(numb.id);
         // $("#materialsName").text(numb.name);
         // $("#materialsSinglePrice").text(numb.singleNum);
@@ -262,7 +262,10 @@
                 },
             },
             messages: {
-                name: "请输入物资名称",
+                name: {
+                    required: "请输入物资现存数量",
+                    rangelength:"物资名称长度为1-10个字符",
+                },
                 stockNum: {
                     required: "请输入物资现存数量",
                 },

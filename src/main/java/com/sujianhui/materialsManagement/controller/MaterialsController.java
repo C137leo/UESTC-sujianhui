@@ -45,7 +45,7 @@ public class MaterialsController {
     @RequestMapping("/showMaterialsList")
     @ResponseBody
     public Msg getAllMaterials(@RequestParam(value="pn",defaultValue="1")int pageNo,
-                               @RequestParam(value="pageSize",defaultValue="3")int pageSize,
+                               @RequestParam(value="pageSize",defaultValue="10")int pageSize,
                                Model model){
         PageInfo pageInfo=materialsService.getAllMaterials(pageNo,pageSize);
         Msg msg=Msg.success().add("pageInfo",pageInfo);
@@ -106,7 +106,7 @@ public class MaterialsController {
         List<MaterialsDTO> materialsList=new ArrayList<>();
         materialsList.add(materials);
         model.addAttribute("materialsList",materialsList);
-//        return Msg.success().add("materials",materials);
+//      return Msg.success().add("materials",materials);
         return "searchTbl";
     }
 
@@ -133,9 +133,10 @@ public class MaterialsController {
     @RequestMapping(value = "/checkMaterialsName",method = RequestMethod.POST)
     @ResponseBody
     public Msg checkMaterialsName(@RequestParam("name") String name){
-        String regx="(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";
+//        String regx="(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";用户名必须是2-5位的中文或者6-16位英文和数字的组合
+        String regx="(^[a-zA-Z]{1,10}$)|(^[\\u2E80-\\u9FFF]{2,5})";
         if(!name.matches(regx)){
-            return Msg.fail().add("va_msg", "用户名必须是2-5位的中文或者6-16位英文和数字的组合");
+            return Msg.fail().add("va_msg", "用户名必须是2-5位的中文或者1-10位英文字符");
         }
         //数据库用户名重复校验
         boolean b=materialsService.checkMaterials(name);

@@ -5,6 +5,10 @@
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
 	<meta http-equiv="expires" content="0">
+	<!--解决403错误方法-->
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<!-- default header name is X-CSRF-TOKEN -->
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
 	<link type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"  rel="stylesheet">
 
@@ -30,6 +34,7 @@
 		<label class="col-sm-2 control-label" for="username">用户名：</label>
 		<div class="col-sm-5">
 			<input class="form-control" id="username" name="username" />
+			<span id="helpBlock1" class="help-block"></span>
 		</div>
 	</div>
 	<div class="form-group">
@@ -49,161 +54,212 @@
 		<div class="col-sm-5">
 			<input class="form-control" id="adminPassword" name="adminPassword" type="password" />
 		</div>
-		<!--暂时不需要的form-group-->
-	<!--<div class="form-group">-->
-		<!--<label class="col-sm-2 control-label" for="email">E-Mail：</label>-->
-		<!--<div class="col-sm-5">-->
-			<!--<input class="form-control" id="email" name="email" />-->
-		<!--</div>-->
-	<!--</div>-->
-	<!--<div class="form-group">-->
-		<!--<label class="col-sm-2 control-label" for="phone">手机号码：</label>-->
-		<!--<div class="col-sm-5">-->
-			<!--<input class="form-control" id="phone" name="phone" />-->
-		<!--</div>-->
-	<!--</div>-->
-	<!--<div class="form-group">-->
-		<!--<label class="col-sm-2 control-label" for="tel">固定电话：</label>-->
-		<!--<div class="col-sm-5">-->
-			<!--<input class="form-control" id="tel" name="tel" />-->
-		<!--</div>-->
-	<!--</div>-->
-	<!--<div class="form-group">-->
-		<!--<label class="col-sm-2 control-label" for="address">家庭住址：</label>-->
-		<!--<div class="col-sm-5">-->
-			<!--<input class="form-control" id="address" name="address" />-->
-		<!--</div>-->
-	<!--</div>-->
+	</div>
 	<div class="form-group">
 		<div class="col-md-offset-2 col-md-10">
-			<button type="submit" class="btn btn-primary btn-sm">注册</button>
+			<button type="submit" class="btn btn-primary btn-sm" id="register_button">注册</button>
 			<button type="reset" class="btn btn-primary btn-sm">重置</button>
 		</div>
-        <script type="text/javascript">
-            $(function() {
-                // 手机号码验证
-                jQuery.validator.addMethod("isPhone", function(value, element) {
-                    var length = value.length;
-                    return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));
-                }, "请正确填写您的手机号码。");
 
-                // 电话号码验证
-                jQuery.validator.addMethod("isTel", function(value, element) {
-                    var tel = /^(\d{3,4}-)?\d{7,8}$/g; // 区号－3、4位 号码－7、8位
-                    return this.optional(element) || (tel.test(value));
-                }, "请正确填写您的电话号码。");
-                // 匹配密码，以字母开头，长度在6-12之间，必须包含数字和特殊字符。
-                jQuery.validator.addMethod("isPwd", function(value, element) {
-                    var str = value;
-                    if (str.length < 6 || str.length > 18)
-                        return false;
-                    // if (!/^[a-zA-Z]/.test(str))
-                    //     return false;
-                    // if (!/[0-9]/.test(str))
-                    //     return fasle;
-                    return this.optional(element)||/[0-9]/.test(str);
-                }, "密码长度在6-12之间。以数字结尾。");
-
-                $("#register-form").validate({
-                    errorElement : 'span',
-                    errorClass : 'help-block',
-
-                    rules : {
-                        username :{
-                            required: true,
-                        },
-                        email : {
-                            required : true,
-                            email : true
-                        },
-                        password : {
-                            required : true,
-                            isPwd : true
-                        },
-                        confirmPassword : {
-                            required : true,
-                            isPwd : true,
-                            equalTo : "#password"
-                        },
-                        // adminPassword : {
-                        //     required : false,
-                        //     isPwd : true
-                        // }
-                        //暂时不需要校验的内容
-                        // phone : {
-                        //     required : true,
-                        //     isPhone : true
-                        // },
-                        // tel : {
-                        //     isTel : true
-                        // },
-                        // address : {
-                        //     minlength : 10
-                        // }
-                    },
-                    messages : {
-                        username : "请输入姓名",
-                        email : {
-                            required : "请输入Email地址",
-                            email : "请输入正确的email地址"
-                        },
-                        password : {
-                            required : "请输入密码",
-                            //minlength: $.validator.format("最少要输入 6 个字符"),
-                            // minlength : jQuery.format("密码不能小于{0}个字 符")
-                        },
-                        confirmPassword : {
-                            required : "请输入确认密码",
-                        },
-
-                        //暂时不需要校验的内容
-                        // phone : {
-                        //     required : "请输入手机号码"
-                        // },
-                        // tel : {
-                        //     required : "请输入座机号码"
-                        // },
-                        // address : {
-                        //     required : "请输入家庭地址",
-                        //     //jquery.format.....会在前端页面报错，是导致validate无法验证的原因。
-                        //     // minlength : jQuery.format("家庭地址不能少于{0}个字符")
-                        // }
-                    },
-                    errorPlacement : function(error, element) {
-                        //清空上一个span样式
-                        element.next().remove();
-                        element.after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
-                        element.closest('.form-group').append(error);
-                    },
-                    highlight : function(element) {
-                        $(element).closest('.form-group').addClass('has-error has-feedback');
-                    },
-                    success : function(label) {
-                        var el=label.closest('.form-group').find("input");
-                        //清空上一个span样式
-                        el.next().remove();
-                        el.after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
-                        label.closest('.form-group').removeClass('has-error').addClass("has-feedback has-success");
-                        //这个确实没太看明白label.remove是啥意思。
-                        label.remove();
-                    },
-
-                    //  一个输入框的样式。
-                    //   <div class="form-group">
-                    //     <label class="col-sm-2 control-label" for="address">家庭住址：</label>
-                    // <div class="col-sm-5">
-                    //     <input class="form-control" id="address" name="address" />
-                    //     </div>
-                    //     </div>
-                    submitHandler: function(form) {
-                        // alert("submitted!");
-                        form.submit();
-                    }
-
-                })
-            });
-        </script>
     </div>
 </form>
+<script type="text/javascript">
+    //解决springSEcurity造成的403错误
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+
+    $(function() {
+        // 手机号码验证
+        jQuery.validator.addMethod("isPhone", function(value, element) {
+            var length = value.length;
+            return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));
+        }, "请正确填写您的手机号码。");
+
+        // 电话号码验证
+        jQuery.validator.addMethod("isTel", function(value, element) {
+            var tel = /^(\d{3,4}-)?\d{7,8}$/g; // 区号－3、4位 号码－7、8位
+            return this.optional(element) || (tel.test(value));
+        }, "请正确填写您的电话号码。");
+        // 匹配密码，以字母开头，长度在6-12之间，必须包含数字和特殊字符。
+        jQuery.validator.addMethod("isPwd", function(value, element) {
+            var str = value;
+            if (str.length < 6 || str.length > 18)
+                return false;
+            // if (!/^[a-zA-Z]/.test(str))
+            //     return false;
+            // if (!/[0-9]/.test(str))
+            //     return fasle;
+            return this.optional(element)||/[0-9]/.test(str);
+        }, "密码长度在6-18之间。以数字结尾。");
+
+        $("#register-form").validate({
+            errorElement : 'span',
+            errorClass : 'help-block',
+
+            rules : {
+                username :{
+                    required: true,
+                    rangelength:[1,10],
+                },
+                email : {
+                    required : true,
+                    email : true
+                },
+                password : {
+                    required : true,
+                    isPwd : true
+                },
+                confirmPassword : {
+                    required : true,
+                    isPwd : true,
+                    equalTo : "#password"
+                },
+                // adminPassword : {
+                //     required : false,
+                //     isPwd : true
+                // }
+                //暂时不需要校验的内容
+                // phone : {
+                //     required : true,
+                //     isPhone : true
+                // },
+                // tel : {
+                //     isTel : true
+                // },
+                // address : {
+                //     minlength : 10
+                // }
+            },
+            messages : {
+                username :
+                    {
+                        required : "请输入用户名",
+                        rangelength: "用户名长度为1-10位",
+                    },
+                email : {
+                    required : "请输入Email地址",
+                    email : "请输入正确的email地址"
+                },
+                password : {
+                    required : "请输入密码",
+                    //minlength: $.validator.format("最少要输入 6 个字符"),
+                    // minlength : jQuery.format("密码不能小于{0}个字 符")
+                },
+                confirmPassword : {
+                    required : "请输入确认密码",
+                    equalTo : "两次密码输入需要一致",
+                },
+
+                //暂时不需要校验的内容
+                // phone : {
+                //     required : "请输入手机号码"
+                // },
+                // tel : {
+                //     required : "请输入座机号码"
+                // },
+                // address : {
+                //     required : "请输入家庭地址",
+                //     //jquery.format.....会在前端页面报错，是导致validate无法验证的原因。
+                //     // minlength : jQuery.format("家庭地址不能少于{0}个字符")
+                // }
+            },
+            errorPlacement : function(error, element) {
+                //清空上一个span样式
+                element.next().remove();
+                element.after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+                element.closest('.form-group').append(error);
+            },
+            highlight : function(element) {
+                $(element).closest('.form-group').addClass('has-error has-feedback');
+            },
+            success : function(label) {
+                var el=label.closest('.form-group').find("input");
+                var button=$("#register_button").attr("ajax-va");
+                //清空上一个span样式
+                el.next().remove();
+                el.after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+                label.closest('.form-group').removeClass('has-error').addClass("has-feedback has-success");
+                //这个确实没太看明白label.remove是啥意思。
+                label.remove();
+                if (button=="success"){
+                    //清空上一个span样式
+                    $("#username").next().remove();
+
+                    $("#username").after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+                    label.closest('.form-group').removeClass('has-error').addClass("has-feedback has-success");
+                    //这个确实没太看明白label.remove是啥意思。
+                    label.remove();
+                }else if (button=="error"){
+                    //清空上一个span样式
+                    $("#username").next().remove();
+                    $("#username").after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+                    $("#username").closest('.form-group').removeClass('has-success').addClass("has-feedback has-error");
+                    //这个确实没太看明白label.remove是啥意思。
+                    label.remove();
+                }
+            },
+
+            submitHandler: function(form) {
+                // alert("submitted!");
+                form.submit();
+            }
+
+        })
+    });
+
+    //以下内容为员工注册的表单
+    //校验用户名是否可用
+    $("#username").change(
+        function() {
+            //判断之前的ajax用户名校验是否成功，如果成功
+            //发送ajax请求校验用户是否可用
+            var username = this.value;
+            $.ajax({
+                url : "/checkUserName",
+                data :  "username=" + username,
+                type : "POST",
+                success : function(result) {
+                    if (result.code == 100) {
+                        show_validate_msg("#username",
+                            "success", "用户名可以使用");
+                        $("#register_button").attr("ajax-va", "success");
+                    } else {
+                        show_validate_msg("#username",
+                            "error", result.extend.va_msg);
+                        $("#register_button").attr("ajax-va", "error");
+                    }
+                }
+            });
+        });
+
+    function show_validate_msg(ele, status, msg) {
+        $(ele).parent().parent().removeClass("has-success has-error");
+        $(ele).parent().removeClass("has-success has-error");
+        $(ele).next("span").text("");
+        $(ele).next("span").removeClass("glyphicon glyphicon-ok form-control-feedback glyphicon-remove");
+        $(ele).next("span").next("span").removeClass("glyphicon glyphicon-ok form-control-feedback glyphicon-remove help-block");
+        if ("success" == status) {
+            $(ele).parent().parent().addClass("has-success");
+            $(ele).parent().addClass("has-success");
+            $(ele).next().next().remove();
+            $(ele).next().remove();
+            $(ele).after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+            $(ele).next("span").after('<span class="help-block"></span>');
+            $(ele).next("span").next("span").text(msg);
+        } else if ("error" == status) {
+            $(ele).parent().parent().addClass("has-error");
+            $(ele).parent().addClass("has-error");
+            $(ele).next().next().remove();
+            $(ele).next().remove();
+            $(ele).after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+            $(ele).next("span").after('<span class="help-block"></span>');
+            $(ele).next("span").next("span").text(msg);
+        }
+    }
+</script>
 </body>
+
 </html>

@@ -280,13 +280,6 @@
             var length = value.length;
             return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));
         }, "请正确填写您的手机号码。");
-        //姓名验证
-        jQuery.validator.addMethod("isName", function (value, element) {
-            var str = value;
-            if (str==" ")
-                return false;
-            return this.optional(element)
-        }, "物资名称不能为空。");
         jQuery.validator.addMethod("isNum", function (value, element) {
             var str = value;
             if (str==" ")
@@ -295,17 +288,6 @@
                  return fasle;
             return this.optional(element)
         }, "物资数量或价格不能为空，且必须为数字。");
-        // 匹配密码，以字母开头，长度在6-12之间，必须包含数字和特殊字符。
-        jQuery.validator.addMethod("isPwd", function (value, element) {
-            var str = value;
-            if (str.length < 6 || str.length > 18)
-                return false;
-            // if (!/^[a-zA-Z]/.test(str))
-            //     return false;
-            // if (!/[0-9]/.test(str))
-            //     return fasle;
-            return this.optional(element) || /[0-9]/.test(str);
-        }, "密码长度在6-12之间。以数字结尾。");
 
         //新增物资的jquery.validator校验
         $("#addMaterials-form").validate({
@@ -327,12 +309,17 @@
                 },
             },
             messages: {
-                name: "请输入物资名称",
+                name:
+                    {
+                        required:"请输入物资名称",
+                        rangelength:"名称为1-10个字符",
+                    },
+                singlePrice:{
+                    required: "物资单价不为空，不清楚就输入0",
+                    number:"请输入正确的数字",
+                },
                 stockNum: {
                     required: "请输入物资现存数量",
-                },
-                singleNum: {
-                    required: "请输入单价，不清楚的话先填0",
                     number:"请输入正确的数字",
                 },
             },
@@ -356,6 +343,7 @@
                 if (button=="success"){
                     //清空上一个span样式
                     $("#materialsName_add_input").next().remove();
+
                     $("#materialsName_add_input").after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
                     label.closest('.form-group').removeClass('has-error').addClass("has-feedback has-success");
                     //这个确实没太看明白label.remove是啥意思。
@@ -442,6 +430,7 @@
         })
 
     });
+
     //根据pagehelper的方法由后端返回有用的信息
     function to_page(pn) {
         $.ajax({
@@ -656,7 +645,7 @@
     function reset_form(ele) {
         $(ele)[0].reset();
         //清空表单样式
-        $(ele).find("*").removeClass("has-error has-success");
+        $(ele).find("*").removeClass("has-error has-success glyphicon glyphicon-ok glyphicon-remove form-control-feedback");
         $(ele).find(".help-block").text("");
     }
 
@@ -673,7 +662,6 @@
     //         }
     //     });
     // });
-
 
     //新增物资的按钮的点击事件
     $("#materials_add_modal_btn").click(function() {
@@ -729,13 +717,13 @@
         $("#materialsName_add_input").next().remove();
         $("#materialsPrice_add_input").next().remove();
         $("#materialsStockNum_add_input").next().remove();
-        //保存更新员工时的validate表单校验，前端不通过就无法提交
+        //保存更新物资时的validate表单校验，前端不通过就无法提交
         var flag = $("#updateMaterials-form").valid();
         if(!flag){
             //没有通过验证
             return;
         }
-        //发送ajax请求保存更新的员工数据、
+        //发送ajax请求保存更新的物资数据、
         $.ajax({
             url : "/materialsUpdate/" + $(this).attr("edit-id"),
             type : "PUT",
@@ -751,7 +739,6 @@
             }
         });
     });
-
 
     //搜索框的提交按钮
     // $("#searchMaterialsButton").click(function() {
@@ -848,27 +835,33 @@
         $(ele).parent().parent().removeClass("has-success has-error");
         $(ele).parent().removeClass("has-success has-error");
         $(ele).next("span").text("");
+        $(ele).next("span").removeClass("glyphicon glyphicon-ok form-control-feedback glyphicon-remove");
+        $(ele).next("span").next("span").removeClass("glyphicon glyphicon-ok form-control-feedback glyphicon-remove help-block");
         if ("success" == status) {
             $(ele).parent().parent().addClass("has-success");
             $(ele).parent().addClass("has-success");
+            $(ele).next().next().remove();
             $(ele).next().remove();
             $(ele).after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
-            $(ele).next("span").text(msg);
+            $(ele).next("span").after('<span class="help-block"></span>');
+            $(ele).next("span").next("span").text(msg);
         } else if ("error" == status) {
             $(ele).parent().parent().addClass("has-error");
             $(ele).parent().addClass("has-error");
+            $(ele).next().next().remove();
             $(ele).next().remove();
             $(ele).after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
-            $(ele).next("span").text(msg);
+            $(ele).next("span").after('<span class="help-block"></span>');
+            $(ele).next("span").next("span").text(msg);
         }
     }
 
-    //以下内容为员工添加的表单
-    //校验用户名是否可用
+    //以下内容为物资添加的表单
+    //校验物资名称是否可用
     $("#materialsName_add_input").change(
         function() {
-            //判断之前的ajax用户名校验是否成功，如果成功
-            //发送ajax请求校验用户是否可用
+            //判断之前的ajax物资名校验是否成功，如果成功
+            //发送ajax请求校验物资名是否可用
             var name = this.value;
             $.ajax({
                 url : "/checkMaterialsName",
@@ -905,7 +898,7 @@
                 if ($(this).attr("ajax-va") == "error") {
                     return false;
                 }
-                //2.发送ajax请求保存员工
+                //2.发送ajax请求保存物资
                 $
                     .ajax({
                         url : "/createMaterials",
