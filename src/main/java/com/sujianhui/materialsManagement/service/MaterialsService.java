@@ -62,11 +62,11 @@ public class MaterialsService {
         BeanUtils.copyProperties(materials,materialsDTO);
         materialsDTO.setBorrowNum(0);
         materialsDTO.setStoreNum(0);
-        materialsDTO.setStockNum(0);
+//        materialsDTO.setStockNum(0);
         materialsMapper.saveMaterials(materialsDTO);
         Integer materialsId=materialsMapper.getMaterialsId(materialsDTO.getName());
         stock.setMaterialId(materialsId);
-        stock.setStockNum(0);
+        stock.setStockNum(materialsDTO.getStockNum());
         store.setMaterialId(materialsId);
         store.setStoreNum(0);
         borrow.setMaterialId(materialsId);

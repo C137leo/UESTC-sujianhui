@@ -280,7 +280,7 @@
             var length = value.length;
             return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/.test(value));
         }, "请正确填写您的手机号码。");
-        jQuery.validator.addMethod("isNum", function (value, element) {
+        jQuery.validator.addMethod("isNum", function (value, element){
             var str = value;
             if (str==" ")
                 return false;
@@ -870,7 +870,7 @@
                 success : function(result) {
                     if (result.code == 100) {
                         show_validate_msg("#materialsName_add_input",
-                            "success", "用户名可以使用");
+                            "success", "物资名称可以使用");
                         $("#materials_save_btn").attr("ajax-va", "success");
                     } else {
                         show_validate_msg("#materialsName_add_input",
@@ -906,6 +906,8 @@
                         data : $("#materialsAddModal form")
                             .serialize(),
                         success : function(result) {
+                            console.log($("#materialsAddModal form")
+                                .serialize());
                             //先判断是否成功
                             if (result.code == 100) {
                                 //alert(result.msg);
@@ -914,7 +916,6 @@
                                 $("#materialsAddModal").modal('hide');
                                 //2.来到最后一页显示刚才保存的数据
                                 //发送ajax请求显示最后一页数据即可
-                                //
                                 to_page(totalRecord);
                             }
                         }

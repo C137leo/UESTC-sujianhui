@@ -136,7 +136,7 @@ public class MaterialsController {
 //        String regx="(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";用户名必须是2-5位的中文或者6-16位英文和数字的组合
         String regx="(^[a-zA-Z]{1,10}$)|(^[\\u2E80-\\u9FFF]{2,5})";
         if(!name.matches(regx)){
-            return Msg.fail().add("va_msg", "用户名必须是2-5位的中文或者1-10位英文字符");
+            return Msg.fail().add("va_msg", "物资名称必须是2-5位的中文或者1-10位英文字符");
         }
         //数据库用户名重复校验
         boolean b=materialsService.checkMaterials(name);
@@ -158,6 +158,7 @@ public class MaterialsController {
     @RequestMapping(value = "/createMaterials",method = RequestMethod.POST)
     @ResponseBody
         public Msg createMaterials(@Valid Materials materials,BindingResult result){
+        System.out.println(materials);
         if(result.hasErrors()) {
             //校验失败应该返回失败，在模态框中显示校验失败的错误信息
             Map<String, Object> map=new HashMap<>();

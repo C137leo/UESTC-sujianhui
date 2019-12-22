@@ -14,5 +14,7 @@ public class Materials {
     private String name;
     @Range(min=0, max=10000)
     private Double singlePrice;
+
+    private Integer stockNum;
     private boolean isDelete;
 }
